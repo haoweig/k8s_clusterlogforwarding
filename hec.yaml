@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: splunk-hec-secret
+  namespace: openshift-logging
+type: Opaque
+data:
+  token: <BASE64-ENCODED-HEC-TOKEN>

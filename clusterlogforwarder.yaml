@@ -1,0 +1,32 @@
+apiVersion: observability.openshift.io/v1
+kind: ClusterLogForwarder
+metadata:
+  name: instance-gitops
+  namespace: openshift-logging
+spec:
+  serviceAccount:
+    name: logging-sa
+  outputs:
+    - name: splunk-hec
+      type: splunk
+      splunk:
+        index: <YOUR-SPLUNK-INDEX>
+        url: https://<YOUR-SPLUNK-HEC-ENDPOINT> #example  https://splunk-hec-splunk-operator.apps.sno-415.example.com
+        authentication:
+          token:
+            key: token
+            secretName: splunk-hec-secret
+      tls:
+        insecureSkipVerify: false  
+  inputs:
+    - name: my-namespace-logs
+      type: application
+      application:
+        namespaces:
+          - <YOUR-TARGET-NAMESPACE>  # Please let me know which namespace you want to collect logs from
+  pipelines:
+    - name: send-to-splunk
+      inputRefs:
+        - my-namespace-logs
+      outputRefs:
+        - splunk-hec
